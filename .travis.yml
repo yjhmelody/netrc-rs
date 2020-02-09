@@ -1,8 +1,6 @@
 language: rust
 sudo: required
 rust:
-  - "1.31"
-  - "1.39"
   - stable
   - nightly
 matrix:
@@ -10,5 +8,6 @@ matrix:
     - rust: nightly
 
 script:
-  - cargo clippy
+  - cargo clippy --all -- -D warnings
+  - cargo fmt --all -- --check
   - cargo test --verbose

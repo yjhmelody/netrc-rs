@@ -24,7 +24,7 @@ impl Display for Machine {
                     Some(val) => write!(f, $fmt, val),
                 }
             };
-          }
+        }
 
         write_key!(self.name, "machine {}", "default")?;
         write_key!(self.login, " login {}", "")?;
@@ -209,7 +209,10 @@ impl Netrc {
                 Ok(())
             }
 
-            Token::Str(s) => Err(Error::IllegalFormat(lexer.tokens.position(), format!("token: {}", s))),
+            Token::Str(s) => Err(Error::IllegalFormat(
+                lexer.tokens.position(),
+                format!("token: {}", s),
+            )),
         }
     }
 }
@@ -421,7 +424,10 @@ machine host2.com login login2"#
         let netrc = Netrc::parse(input, true).unwrap();
         assert_eq!(netrc.machines.len(), 1);
         assert!(netrc.macdefs.is_empty());
-        assert_eq!(netrc.unknown_entries, vec!["my_entry1".to_string(), "my_entry2".to_string()]);
+        assert_eq!(
+            netrc.unknown_entries,
+            vec!["my_entry1".to_string(), "my_entry2".to_string()]
+        );
 
         let machine = netrc.machines[0].clone();
         assert_eq!(machine.name, Some("example.com".into()));
@@ -466,8 +472,7 @@ machine host2.com login login2"#
 
     #[test]
     fn parse_default() {
-        let input =
-            r#"machine example.com login test
+        let input = r#"machine example.com login test
             default login def"#;
         let netrc = Netrc::parse(input, false).unwrap();
         assert_eq!(netrc.machines.len(), 2);
@@ -479,7 +484,6 @@ machine host2.com login login2"#
         let machine = netrc.machines[1].clone();
         assert_eq!(machine.name, None);
         assert_eq!(machine.login, Some("def".into()));
-
     }
 
     #[test]
