@@ -1,0 +1,14 @@
+language: rust
+sudo: required
+rust:
+  - "1.31"
+  - "1.39"
+  - stable
+  - nightly
+matrix:
+  allow_failures:
+    - rust: nightly
+
+script:
+  - cargo clippy
+  - cargo test --verbose
