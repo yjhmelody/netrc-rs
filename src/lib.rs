@@ -4,13 +4,13 @@ extern crate alloc;
 extern crate std;
 
 #[cfg(not(feature = "std"))]
-use alloc::vec::Vec;
-#[cfg(not(feature = "std"))]
 use alloc::string::{String, ToString};
+#[cfg(not(feature = "std"))]
+use alloc::vec::Vec;
 use core::fmt;
 use core::fmt::{Display, Formatter};
-use core::str::Chars;
 use core::result;
+use core::str::Chars;
 
 /// The `.netrc` machine info
 #[derive(Debug, Default, Eq, PartialEq, Clone)]
@@ -221,7 +221,7 @@ impl Netrc {
 
             Token::Str(s) => Err(Error::IllegalFormat(
                 lexer.tokens.position(),
-                "token: ".to_string() + s
+                "token: ".to_string() + s,
             )),
         }
     }
@@ -259,7 +259,6 @@ impl Display for Token {
             MacDef => "macdef",
             Str(s) => s,
         };
-        format!("{}", "");
         write!(f, "{}", s)
     }
 }
