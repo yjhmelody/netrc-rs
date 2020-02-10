@@ -1,6 +1,16 @@
+#[cfg(not(feature = "std"))]
+extern crate alloc;
+#[cfg(feature = "std")]
+extern crate std;
+
+#[cfg(not(feature = "std"))]
+use alloc::vec::Vec;
+#[cfg(not(feature = "std"))]
+use alloc::string::{String, ToString};
 use core::fmt;
 use core::fmt::{Display, Formatter};
 use core::str::Chars;
+use core::result;
 
 /// The `.netrc` machine info
 #[derive(Debug, Default, Eq, PartialEq, Clone)]
@@ -42,7 +52,7 @@ pub struct Netrc {
     pub machines: Vec<Machine>,
     /// macro name and a list cmd are paired
     pub macdefs: Vec<(String, Vec<String>)>,
-    /// support collecting unknown entry when parsing for some consumed conditions
+    /// support collecting unknown entry when parsing for extended using
     pub unknown_entries: Vec<String>,
 }
 
@@ -68,7 +78,7 @@ impl Display for Error {
     }
 }
 
-pub type Result<T> = std::result::Result<T, Error>;
+pub type Result<T> = result::Result<T, Error>;
 
 impl Netrc {
     /// Parse a `Netrc` format str.
@@ -211,7 +221,7 @@ impl Netrc {
 
             Token::Str(s) => Err(Error::IllegalFormat(
                 lexer.tokens.position(),
-                format!("token: {}", s),
+                "token: ".to_string() + s
             )),
         }
     }
@@ -237,7 +247,7 @@ enum Token {
 }
 
 impl Display for Token {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         use Token::*;
 
         let s = match self {
@@ -249,7 +259,7 @@ impl Display for Token {
             MacDef => "macdef",
             Str(s) => s,
         };
-
+        format!("{}", "");
         write!(f, "{}", s)
     }
 }
@@ -340,7 +350,7 @@ impl<'a> Tokens<'a> {
 
     fn next_commands(&mut self) -> Vec<String> {
         self.skip_whitespace();
-        let mut cmds = vec![];
+        let mut cmds = Vec::new();
         for line in self.buf.clone().as_str().lines() {
             for _ in 0..=line.len() {
                 self.buf.next();
